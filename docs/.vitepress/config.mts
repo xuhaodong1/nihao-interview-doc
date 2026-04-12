@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 
-export default defineConfig({
+export default withMermaid(defineConfig({
   title: 'NIHAO 面试宝典',
   description: '全面的技术面试知识库',
   lang: 'zh-CN',
@@ -26,9 +27,10 @@ export default defineConfig({
       {
         text: 'AI',
         items: [
-          { text: '深度学习', link: '/deep-learning/' },
           { text: '机器学习', link: '/machine-learning/' },
+          { text: '深度学习', link: '/deep-learning/' },
           { text: '端智能', link: '/on-device-ai/' },
+          { text: 'LLM / AI Agent', link: '/llm-agent/' },
         ],
       },
       {
@@ -178,8 +180,6 @@ export default defineConfig({
           text: '深度学习',
           items: [
             { text: '概览', link: '/deep-learning/' },
-            { text: '数学基础', link: '/deep-learning/math' },
-            { text: '机器学习基础', link: '/deep-learning/ml-basics' },
             { text: '神经网络基础', link: '/deep-learning/neural-networks' },
             { text: '反向传播与优化', link: '/deep-learning/backprop' },
             { text: 'CNN', link: '/deep-learning/cnn' },
@@ -195,6 +195,8 @@ export default defineConfig({
           text: '机器学习',
           items: [
             { text: '概览', link: '/machine-learning/' },
+            { text: '数学基础', link: '/machine-learning/math' },
+            { text: '机器学习基础', link: '/machine-learning/basics' },
             { text: '监督学习', link: '/machine-learning/supervised' },
             { text: '非监督学习', link: '/machine-learning/unsupervised' },
             { text: '集成学习', link: '/machine-learning/ensemble' },
@@ -215,6 +217,21 @@ export default defineConfig({
             { text: '模型转换与优化', link: '/on-device-ai/model-conversion' },
             { text: '端侧性能调优', link: '/on-device-ai/performance' },
             { text: '端智能应用实践', link: '/on-device-ai/practice' },
+          ],
+        },
+      ],
+      '/llm-agent/': [
+        {
+          text: 'LLM / AI Agent',
+          items: [
+            { text: '概览', link: '/llm-agent/' },
+            { text: 'LLM 原理与架构', link: '/llm-agent/llm-fundamentals' },
+            { text: 'Prompt Engineering', link: '/llm-agent/prompt-engineering' },
+            { text: 'RAG 检索增强生成', link: '/llm-agent/rag' },
+            { text: 'Function Calling 与工具调用', link: '/llm-agent/function-calling' },
+            { text: 'AI Agent 架构', link: '/llm-agent/agent-architecture' },
+            { text: '多 Agent 协作', link: '/llm-agent/multi-agent' },
+            { text: '评估与对齐', link: '/llm-agent/evaluation-alignment' },
           ],
         },
       ],
@@ -273,4 +290,16 @@ export default defineConfig({
       next: '下一篇',
     },
   },
-})
+  mermaid: {
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#dbeafe',
+      primaryTextColor: '#1e3a5f',
+      primaryBorderColor: '#3b82f6',
+      lineColor: '#3b82f6',
+      secondaryColor: '#eff6ff',
+      tertiaryColor: '#f0f9ff',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei"',
+    },
+  },
+}))

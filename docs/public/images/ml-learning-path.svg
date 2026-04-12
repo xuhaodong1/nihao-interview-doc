@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 280">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="10" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 3.5 L 0 7 z" fill="#3b82f6"/>
+    </marker>
+    <filter id="shadow" x="-5%" y="-10%" width="110%" height="130%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <style>
+    .node { fill: #f0f7ff; stroke: #3b82f6; stroke-width: 1.5; rx: 10; filter: url(#shadow); }
+    .label { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 15px; fill: #1e293b; font-weight: 500; text-anchor: middle; dominant-baseline: central; }
+    .num { font-family: -apple-system, sans-serif; font-size: 11px; fill: white; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+    .num-bg { fill: #3b82f6; }
+    .arrow { stroke: #3b82f6; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  </style>
+  <rect width="960" height="280" fill="white"/>
+  <rect x="185" y="28" width="170" height="46" class="node"/>
+  <text x="270.0" y="51.0" class="label">数学基础</text>
+  <circle cx="197" cy="40" r="9" class="num-bg"/>
+  <text x="197" y="40" class="num">1</text>
+  <rect x="395" y="28" width="170" height="46" class="node"/>
+  <text x="480.0" y="51.0" class="label">机器学习基础</text>
+  <circle cx="407" cy="40" r="9" class="num-bg"/>
+  <text x="407" y="40" class="num">2</text>
+  <rect x="605" y="28" width="170" height="46" class="node"/>
+  <text x="690.0" y="51.0" class="label">监督学习</text>
+  <circle cx="617" cy="40" r="9" class="num-bg"/>
+  <text x="617" y="40" class="num">3</text>
+  <rect x="605" y="118" width="170" height="46" class="node"/>
+  <text x="690.0" y="141.0" class="label">非监督学习</text>
+  <circle cx="617" cy="130" r="9" class="num-bg"/>
+  <text x="617" y="130" class="num">4</text>
+  <rect x="395" y="118" width="170" height="46" class="node"/>
+  <text x="480.0" y="141.0" class="label">集成学习</text>
+  <circle cx="407" cy="130" r="9" class="num-bg"/>
+  <text x="407" y="130" class="num">5</text>
+  <rect x="185" y="118" width="170" height="46" class="node"/>
+  <text x="270.0" y="141.0" class="label">特征工程</text>
+  <circle cx="197" cy="130" r="9" class="num-bg"/>
+  <text x="197" y="130" class="num">6</text>
+  <rect x="185" y="208" width="170" height="46" class="node"/>
+  <text x="270.0" y="231.0" class="label">模型评估与调优</text>
+  <circle cx="197" cy="220" r="9" class="num-bg"/>
+  <text x="197" y="220" class="num">7</text>
+  <rect x="395" y="208" width="170" height="46" class="node"/>
+  <text x="480.0" y="231.0" class="label">概率图模型</text>
+  <circle cx="407" cy="220" r="9" class="num-bg"/>
+  <text x="407" y="220" class="num">8</text>
+  <rect x="605" y="208" width="170" height="46" class="node"/>
+  <text x="690.0" y="231.0" class="label">推荐系统</text>
+  <circle cx="617" cy="220" r="9" class="num-bg"/>
+  <text x="617" y="220" class="num">9</text>
+  <line x1="359" y1="51.0" x2="391" y2="51.0" class="arrow"/>
+  <line x1="569" y1="51.0" x2="601" y2="51.0" class="arrow"/>
+  <line x1="690.0" y1="78" x2="690.0" y2="114" class="arrow"/>
+  <line x1="601" y1="141.0" x2="569" y2="141.0" class="arrow"/>
+  <line x1="391" y1="141.0" x2="359" y2="141.0" class="arrow"/>
+  <line x1="270.0" y1="168" x2="270.0" y2="204" class="arrow"/>
+  <line x1="359" y1="231.0" x2="391" y2="231.0" class="arrow"/>
+  <line x1="569" y1="231.0" x2="601" y2="231.0" class="arrow"/>
+</svg>

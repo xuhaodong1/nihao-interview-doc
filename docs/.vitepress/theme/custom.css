@@ -17,6 +17,12 @@
   padding: 0 32px;
 }
 
+@media (max-width: 768px) {
+  .VPDoc .content {
+    padding: 0;
+  }
+}
+
 /* 右侧目录栏缩窄 */
 .VPDoc .aside {
   max-width: 200px;
@@ -68,6 +74,12 @@
 /* 底部翻页按钮留出间距 */
 .prev-next {
   padding-bottom: 48px;
+}
+
+/* 图片居中 */
+.vp-doc img {
+  display: block;
+  margin: 16px auto;
 }
 
 /* 首页卡片拓宽 */

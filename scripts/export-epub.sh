@@ -28,7 +28,18 @@ if [ ${#INPUT_FILES[@]} -eq 0 ]; then
   exit 1
 fi
 
-pandoc "${INPUT_FILES[@]}" \
+# 创建临时目录，将图片路径从 /images/ 替换为实际路径
+TMP_DIR=$(mktemp -d)
+trap "rm -rf $TMP_DIR" EXIT
+
+PROCESSED_FILES=()
+for f in "${INPUT_FILES[@]}"; do
+  tmp_file="$TMP_DIR/$(basename "$f")"
+  sed "s|](/images/|](docs/public/images/|g; s|src=\"/images/|src=\"docs/public/images/|g" "$f" > "$tmp_file"
+  PROCESSED_FILES+=("$tmp_file")
+done
+
+pandoc "${PROCESSED_FILES[@]}" \
   --metadata title="$TITLE" \
   --metadata author="$AUTHOR" \
   --toc \

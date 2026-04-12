@@ -28,7 +28,7 @@ ARC 不等于"不用管内存"。ARC 解决了 `retain`/`release` 的手动调�
 
 ## 内存布局
 
-![iOS 进程内存布局](/images/ios-memory-layout.png)
+<img src="/images/ios-memory-layout.png" alt="iOS 进程内存布局" style="max-width: 420px;" />
 
 iOS 进程的内存从低地址到高地址依次是：
 

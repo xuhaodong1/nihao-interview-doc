@@ -4,7 +4,7 @@ layout: home
 hero:
   name: NIHAO
   text: 面试宝典
-  tagline: iOS · Swift/ObjC · C++ · 计算机基础 · AI · 求职准备
+  tagline: iOS · Swift/ObjC · C++ · 计算机基础 · AI / LLM · 求职准备
   actions:
     - theme: brand
       text: 开始阅读
@@ -38,15 +38,18 @@ features:
   - title: 设计模式
     details: 创建型、结构型、行为型模式、iOS 设计模式、反模式
     link: /design-patterns/
-  - title: 深度学习
-    details: 数学基础、CNN、RNN、Transformer、LLM、模型部署
-    link: /deep-learning/
   - title: 机器学习
-    details: 监督学习、集成学习、特征工程、模型评估、推荐系统
+    details: 数学基础、监督学习、集成学习、特征工程、模型评估、推荐系统
     link: /machine-learning/
+  - title: 深度学习
+    details: CNN、RNN、Transformer、LLM、模型部署
+    link: /deep-learning/
   - title: 端智能
     details: 模型压缩与量化、推理框架、模型转换、端侧性能调优
     link: /on-device-ai/
+  - title: LLM / AI Agent
+    details: LLM 原理、Prompt Engineering、RAG、Function Calling、Agent 架构、多 Agent 协作
+    link: /llm-agent/
   - title: 系统设计
     details: 设计方法论、即时通讯、信息流、短链服务、秒杀系统
     link: /system-design/
