@@ -5,24 +5,19 @@
 set -e
 
 DOCS_DIR="docs"
-OUTPUT="nihao-interview.epub"
 TITLE="NIHAO 面试宝典"
 AUTHOR="NIHAO"
 
-# 按章节顺序收集 Markdown 文件
-FILES=(
-  "$DOCS_DIR/ios/index.md"
-  "$DOCS_DIR/cpp/index.md"
-  "$DOCS_DIR/deep-learning/index.md"
-  "$DOCS_DIR/machine-learning/index.md"
-  "$DOCS_DIR/on-device-ai/index.md"
-  "$DOCS_DIR/resume/index.md"
-  "$DOCS_DIR/interview-prep/index.md"
-)
+# 生成带时间标识的输出目录和文件名
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+OUTPUT_DIR="exports/${TIMESTAMP}"
+OUTPUT="${OUTPUT_DIR}/nihao-interview_${TIMESTAMP}.epub"
 
-# 过滤存在的文件, 并收集各章节下所有 md 文件
+mkdir -p "$OUTPUT_DIR"
+
+# 按章节顺序收集各目录下所有 md 文件
 INPUT_FILES=()
-for dir in ios cpp deep-learning machine-learning on-device-ai resume interview-prep; do
+for dir in ios swift-objc cpp algorithm network os database design-patterns deep-learning machine-learning on-device-ai system-design resume interview-prep; do
   for f in "$DOCS_DIR/$dir"/*.md; do
     [ -f "$f" ] && INPUT_FILES+=("$f")
   done
