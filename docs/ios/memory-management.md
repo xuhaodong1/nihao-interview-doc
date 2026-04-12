@@ -28,6 +28,8 @@ ARC 不等于"不用管内存"。ARC 解决了 `retain`/`release` 的手动调�
 
 ## 内存布局
 
+![iOS 进程内存布局](/images/ios-memory-layout.png)
+
 iOS 进程的内存从低地址到高地址依次是：
 
 | 区域 | 存放内容 | 特点 |
@@ -68,6 +70,8 @@ iOS 进程的内存从低地址到高地址依次是：
 | `dealloc` | 计数为 0 时调用 |
 
 **引用计数存在哪？** 在 64 位系统中有两种存储位置：
+
+![isa 指针结构](/images/isa-pointer-layout.png)
 
 1. **isa 指针中**（优化的非指针型 isa）：`extra_rc` 字段占 19 位，最多存储 2^19 的计数
 2. **Side Table 中**：当 `extra_rc` 溢出时，引用计数转移到全局的 Side Table 哈希表
@@ -218,6 +222,8 @@ void objc_setProperty_atomic(id self, SEL _cmd, id newValue) {
 
 ## 弱引用实现
 
+![weak 引用生命周期](/images/weak-ref-lifecycle.png)
+
 `weak` 指针的"对象释放后自动置 nil"是怎么做到的？靠的是 **Side Table 中的弱引用表**：
 
 ```cpp
@@ -292,6 +298,8 @@ ARC 下 `dealloc` 不需要调用 `[super dealloc]`（编译器自动处理）�
 
 `@autoreleasepool` 实现延迟释放：对象调用 `autorelease` 后不会立即释放，而是等到池子 `drain` 时统一发送 `release`。
 
+![AutoreleasePoolPage 结构](/images/autorelease-pool.png)
+
 底层数据结构是 `AutoreleasePoolPage`——每页 4KB，多页组成双向链表：
 
 ```cpp
@@ -331,6 +339,8 @@ NSNumber *num2 = @(NSIntegerMax);     // 普通堆对象，值太大放不下
 | 多线程安全 | 需要加锁 | 天然安全 |
 
 ## 循环引用实战
+
+![循环引用三大场景](/images/retain-cycle.png)
 
 ### delegate 未用 weak
 

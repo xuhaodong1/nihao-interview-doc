@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="960" height="380">
+  <style>
+    text { font-family: 'Helvetica Neue', Helvetica, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+  </style>
+  <text x="480" y="32" text-anchor="middle" font-size="18" font-weight="600" fill="#111827">isa 指针结构（ARM64 非指针型）</text>
+  <text x="480" y="52" text-anchor="middle" font-size="13" fill="#6b7280">64 位 = 各字段按位分布</text>
+  <rect x="50.0" y="80" width="13.4" height="50" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+  <rect x="63.4" y="80" width="13.4" height="50" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+  <rect x="76.9" y="80" width="13.4" height="50" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+  <rect x="90.3" y="80" width="443.4" height="50" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+  <text x="312.0" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#111827">33 bit</text>
+  <rect x="533.8" y="80" width="80.6" height="50" fill="#f3e8ff" stroke="#d8b4fe" stroke-width="1.5"/>
+  <text x="574.1" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#111827">6 bit</text>
+  <rect x="614.4" y="80" width="13.4" height="50" fill="#fef3c7" stroke="#fcd34d" stroke-width="1.5"/>
+  <rect x="627.8" y="80" width="13.4" height="50" fill="#fef3c7" stroke="#fcd34d" stroke-width="1.5"/>
+  <rect x="641.2" y="80" width="13.4" height="50" fill="#fed7aa" stroke="#fdba74" stroke-width="1.5"/>
+  <rect x="654.7" y="80" width="255.3" height="50" fill="#fecaca" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="782.3" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#111827">19 bit</text>
+  <line x1="56.7" y1="130" x2="56.7" y2="142" stroke="#d1d5db" stroke-width="1"/>
+  <text x="56.7" y="150" text-anchor="middle" font-size="9" fill="#374151" transform="rotate(-45, 56.7, 150)">nonpointer</text>
+  <line x1="70.2" y1="130" x2="70.2" y2="142" stroke="#d1d5db" stroke-width="1"/>
+  <text x="70.2" y="150" text-anchor="middle" font-size="9" fill="#374151" transform="rotate(-45, 70.2, 150)">has_assoc</text>
+  <line x1="83.6" y1="130" x2="83.6" y2="142" stroke="#d1d5db" stroke-width="1"/>
+  <text x="83.6" y="150" text-anchor="middle" font-size="9" fill="#374151" transform="rotate(-45, 83.6, 150)">has_cxx_dtor</text>
+  <line x1="312.0" y1="130" x2="312.0" y2="142" stroke="#d1d5db" stroke-width="1"/>
+  <text x="312.0" y="150" text-anchor="middle" font-size="11" fill="#374151">shiftcls</text>
+  <line x1="574.1" y1="130" x2="574.1" y2="142" stroke="#d1d5db" stroke-width="1"/>
+  <text x="574.1" y="150" text-anchor="middle" font-size="11" fill="#374151">magic</text>
+  <line x1="621.1" y1="130" x2="621.1" y2="142" stroke="#d1d5db" stroke-width="1"/>
+  <text x="621.1" y="150" text-anchor="middle" font-size="9" fill="#374151" transform="rotate(-45, 621.1, 150)">weakly_referenced</text>
+  <line x1="634.5" y1="130" x2="634.5" y2="142" stroke="#d1d5db" stroke-width="1"/>
+  <text x="634.5" y="150" text-anchor="middle" font-size="9" fill="#374151" transform="rotate(-45, 634.5, 150)">deallocating</text>
+  <line x1="648.0" y1="130" x2="648.0" y2="142" stroke="#d1d5db" stroke-width="1"/>
+  <text x="648.0" y="150" text-anchor="middle" font-size="9" fill="#374151" transform="rotate(-45, 648.0, 150)">has_sidetable_rc</text>
+  <line x1="782.3" y1="130" x2="782.3" y2="142" stroke="#d1d5db" stroke-width="1"/>
+  <text x="782.3" y="150" text-anchor="middle" font-size="11" fill="#374151">extra_rc</text>
+  <text x="310" y="210" text-anchor="middle" font-size="12" fill="#16a34a" font-weight="600">shiftcls: 类指针（33 位）</text>
+  <text x="780" y="210" text-anchor="middle" font-size="12" fill="#dc2626" font-weight="600">extra_rc: 引用计数 - 1（19 位）</text>
+  <text x="780" y="230" text-anchor="middle" font-size="12" fill="#dc2626" font-weight="600">溢出时转存到 Side Table</text>
+  <rect x="50" y="260" width="860" height="100" rx="8" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="70" y="285" font-size="13" font-weight="600" fill="#111827">关键标志位：</text>
+  <text x="70" y="308" font-size="12" fill="#6b7280">nonpointer = 1 → 优化的非指针型 isa（存储更多信息）</text>
+  <text x="70" y="328" font-size="12" fill="#6b7280">has_sidetable_rc = 1 → extra_rc 溢出，引用计数转存到 Side Table 哈希表</text>
+  <text x="70" y="348" font-size="12" fill="#6b7280">weakly_referenced = 1 → 该对象有弱引用，dealloc 时需遍历弱引用表置 nil</text>
+</svg>
