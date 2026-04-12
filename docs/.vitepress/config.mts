@@ -4,7 +4,7 @@ export default defineConfig({
   title: 'NIHAO 面试宝典',
   description: '全面的技术面试知识库',
   lang: 'zh-CN',
-  base: '/nihao-interview-doc/',
+  base: '/',
   ignoreDeadLinks: true,
 
   themeConfig: {
