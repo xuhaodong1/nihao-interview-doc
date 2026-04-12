@@ -5,6 +5,7 @@ export default defineConfig({
   description: '全面的技术面试知识库',
   lang: 'zh-CN',
   base: '/nihao-interview-doc/',
+  ignoreDeadLinks: true,
 
   themeConfig: {
     nav: [

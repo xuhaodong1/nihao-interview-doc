@@ -1,0 +1,24 @@
+:root {
+  --vp-layout-max-width: 1440px;
+  --vp-sidebar-width: 272px;
+}
+
+/* 关键：覆盖文档内容区最大宽度 */
+.VPDoc {
+  --vp-doc-width: 100%;
+}
+
+/* 去掉 content-container 的宽度限制 */
+.VPDoc .content-container {
+  max-width: 100% !important;
+}
+
+/* 右侧目录栏缩窄，给内容更多空间 */
+.VPDoc .aside {
+  max-width: 220px;
+}
+
+/* 首页卡片拓宽 */
+.VPHome .VPFeatures .container {
+  max-width: 1280px;
+}
