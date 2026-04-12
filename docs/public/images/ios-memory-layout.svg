@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" width="600" height="700">
+  <style>
+    text { font-family: 'Helvetica Neue', Helvetica, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+  </style>
+  <defs>
+    <marker id="arrow-up" markerWidth="10" markerHeight="7" refX="5" refY="0" orient="auto">
+      <polygon points="0 7, 5 0, 10 7" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-down" markerWidth="10" markerHeight="7" refX="5" refY="7" orient="auto">
+      <polygon points="0 0, 5 7, 10 0" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <text x="300" y="36" text-anchor="middle" font-size="18" font-weight="600" fill="#111827">iOS 进程内存布局</text>
+  <text x="300" y="56" text-anchor="middle" font-size="13" fill="#6b7280">低地址 → 高地址（从上到下）</text>
+  <rect x="120" y="80" width="360" height="70" rx="8" ry="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+  <text x="300.0" y="108" text-anchor="middle" font-size="15" font-weight="600" fill="#111827">代码区 (Text)</text>
+  <text x="300.0" y="130" text-anchor="middle" font-size="12" fill="#6b7280">编译后的机器码、常量</text>
+  <rect x="120" y="170" width="360" height="70" rx="8" ry="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+  <text x="300.0" y="198" text-anchor="middle" font-size="15" font-weight="600" fill="#111827">数据区 (Data)</text>
+  <text x="300.0" y="220" text-anchor="middle" font-size="12" fill="#6b7280">已初始化的全局/静态变量</text>
+  <rect x="120" y="260" width="360" height="70" rx="8" ry="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+  <text x="300.0" y="288" text-anchor="middle" font-size="15" font-weight="600" fill="#111827">BSS 区</text>
+  <text x="300.0" y="310" text-anchor="middle" font-size="12" fill="#6b7280">未初始化的全局/静态变量</text>
+  <rect x="120" y="350" width="360" height="70" rx="8" ry="8" fill="#faf5ff" stroke="#e9d5ff" stroke-width="1.5"/>
+  <text x="300.0" y="378" text-anchor="middle" font-size="15" font-weight="600" fill="#111827">堆区 (Heap)</text>
+  <text x="300.0" y="400" text-anchor="middle" font-size="12" fill="#6b7280">alloc / malloc 动态分配</text>
+  <rect x="120" y="440" width="360" height="70" rx="8" ry="8" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1.5"/>
+  <text x="300.0" y="468" text-anchor="middle" font-size="15" font-weight="600" fill="#111827">↕ 空闲区域</text>
+  <rect x="120" y="530" width="360" height="70" rx="8" ry="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+  <text x="300.0" y="558" text-anchor="middle" font-size="15" font-weight="600" fill="#111827">栈区 (Stack)</text>
+  <text x="300.0" y="580" text-anchor="middle" font-size="12" fill="#6b7280">局部变量、函数参数</text>
+  <text x="70" y="120" text-anchor="middle" font-size="12" fill="#6b7280">低地址</text>
+  <line x1="70" y1="130" x2="70" y2="580" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="70" y="598" text-anchor="middle" font-size="12" fill="#6b7280">高地址</text>
+  <line x1="530" y1="430" x2="530" y2="360" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-up)"/>
+  <text x="540" y="400" font-size="12" fill="#2563eb" font-weight="600">堆向上增长</text>
+  <line x1="530" y1="450" x2="530" y2="540" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow-down)"/>
+  <text x="540" y="500" font-size="12" fill="#dc2626" font-weight="600">栈向下增长</text>
+  <text x="300" y="640" text-anchor="middle" font-size="12" fill="#6b7280">堆和栈相向增长，中间为空闲区域</text>
+  <rect x="145" y="652" width="12" height="12" rx="2" fill="#faf5ff" stroke="#e9d5ff" stroke-width="1"/>
+  <text x="163" y="663" font-size="11" fill="#6b7280">开发者管理 (ARC)</text>
+  <rect x="295" y="652" width="12" height="12" rx="2" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="313" y="663" font-size="11" fill="#6b7280">系统自动管理</text>
+</svg>
