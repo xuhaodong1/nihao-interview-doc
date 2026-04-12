@@ -127,6 +127,95 @@ _name = tmp;
 | `weak` | `__weak` | 弱引用，对象释放后自动置 nil |
 | `assign` | `__unsafe_unretained` | 值类型用，不安全引用 |
 
+## copy 语义
+
+面试高频问题："为什么 `NSString` 属性要用 `copy` 而不是 `strong`？"
+
+`copy` 修饰符在赋值时会调用 `copy` 方法生成一份新的不可变副本，防止外部持有的可变版本被意外修改：
+
+```objc
+@property (nonatomic, copy) NSString *name;
+
+NSMutableString *mutableName = [NSMutableString stringWithString:@"Tom"];
+self.name = mutableName;       // 实际存储的是 copy 后的不可变副本
+[mutableName appendString:@"Cat"];
+NSLog(@"%@", self.name);       // 输出 "Tom"，不受影响
+```
+
+如果用 `strong`，`self.name` 和 `mutableName` 指向同一个对象，外部修改会影响内部状态。
+
+**深拷贝 vs 浅拷贝：**
+
+| 操作 | 不可变对象 | 可变对象 |
+|------|----------|---------|
+| `copy` | 浅拷贝（返回自身） | 深拷贝（新不可变对象） |
+| `mutableCopy` | 深拷贝（新可变对象） | 深拷贝（新可变对象） |
+
+```objc
+NSArray *arr = @[@1, @2];
+NSArray *copyArr = [arr copy];             // 浅拷贝，同一对象
+NSMutableArray *mCopyArr = [arr mutableCopy]; // 深拷贝，新对象
+
+NSMutableArray *mArr = [NSMutableArray arrayWithArray:arr];
+NSArray *copyMArr = [mArr copy];           // 深拷贝，新不可变对象
+NSMutableArray *mCopyMArr = [mArr mutableCopy]; // 深拷贝，新可变对象
+```
+
+::: warning 容器的深拷贝只是"单层深拷贝"
+`copy`/`mutableCopy` 对容器只拷贝容器本身，内部元素仍然是指针拷贝（浅拷贝）。真正的完全深拷贝需要用 `NSKeyedArchiver` 或递归 copy。
+:::
+
+自定义对象支持 `copy` 需要实现 `NSCopying` 协议：
+
+```objc
+@interface Person : NSObject <NSCopying>
+@property (nonatomic, copy) NSString *name;
+@end
+
+@implementation Person
+- (id)copyWithZone:(NSZone *)zone {
+    Person *copy = [[Person allocWithZone:zone] init];
+    copy.name = self.name;
+    return copy;
+}
+@end
+```
+
+## atomic vs nonatomic
+
+`atomic` 和 `nonatomic` 控制属性的 getter/setter 是否加锁：
+
+```objc
+// atomic（默认）：getter/setter 内部加自旋锁
+@property (atomic, strong) NSString *name;
+
+// nonatomic：不加锁，性能更好
+@property (nonatomic, strong) NSString *name;
+```
+
+`atomic` 的 setter 实现（简化）：
+
+```cpp
+void objc_setProperty_atomic(id self, SEL _cmd, id newValue) {
+    spinlock_t& lock = PropertyLocks[GOODHASH(self)];
+    lock.lock();
+    id oldValue = *slot;
+    *slot = newValue;
+    lock.unlock();
+    objc_release(oldValue);
+}
+```
+
+| 对比项 | atomic | nonatomic |
+|-------|--------|-----------|
+| 线程安全 | setter/getter 原子性 | 不保证 |
+| 性能 | 慢（加锁开销） | 快 |
+| 实际使用 | 几乎不用 | 绝大多数场景 |
+
+::: warning atomic 不等于线程安全
+`atomic` 只保证 getter/setter 的原子性，不保证业务逻辑的线程安全。比如 `self.array = @[]` 是安全的，但 `[self.array addObject:obj]` 不安全。真正的线程安全需要用锁或 GCD。
+:::
+
 ## 弱引用实现
 
 `weak` 指针的"对象释放后自动置 nil"是怎么做到的？靠的是 **Side Table 中的弱引用表**：
@@ -168,6 +257,35 @@ void weak_clear_no_lock(weak_table_t *weak_table, id referent) {
 
 ::: tip weak vs assign
 `weak` 释放后自动置 nil（安全），`assign` 释放后变成野指针（危险）。对象类型永远用 `weak`，`assign` 只用于值类型（`int`、`CGFloat` 等）。
+:::
+
+## dealloc 调用链
+
+当引用计数降到 0，对象的销毁经过一条完整的调用链：
+
+```cpp
+- dealloc
+    └── _objc_rootDealloc
+        └── object_dispose
+            └── objc_destructInstance
+                ├── 调用 C++ 析构函数（如果有）
+                ├── 移除关联对象（Associated Objects）
+                └── clearDeallocating
+                    ├── 将所有 weak 指针置为 nil
+                    └── 清理 Side Table 中的引用计数
+            └── free(obj)  // 释放堆内存
+```
+
+关键步骤拆解：
+
+1. **C++ 析构**：如果对象包含 C++ 成员（`isa.has_cxx_dtor = true`），先调用析构函数
+2. **关联对象**：如果有关联对象（`isa.has_assoc = true`），调用 `_object_remove_assocations` 移除所有关联
+3. **弱引用清理**：如果有弱引用（`isa.weakly_referenced = true`），遍历弱引用表将所有 `weak` 指针置为 nil
+4. **引用计数清理**：如果引用计数存在 Side Table 中（`isa.has_sidetable_rc = true`），从表中删除
+5. **释放内存**：调用 `free()` 归还堆内存
+
+::: tip dealloc 中该做什么
+ARC 下 `dealloc` 不需要调用 `[super dealloc]`（编译器自动处理）。通常只需要移除通知观察者、销毁 C 资源（`CFRelease`、`free`）、关闭文件句柄等 ARC 管不到的事情。
 :::
 
 ## 自动释放池
@@ -297,6 +415,73 @@ for (int i = 0; i < 100000; i++) {
 子线程默认没有 RunLoop，也就没有自动释放池。在子线程做大量操作时，务必手动加 `@autoreleasepool`。
 :::
 
+## 内存泄漏检测
+
+循环引用不会崩溃，只会默默占着内存不放。检测手段从简到专：
+
+### deinit 打印（最简单）
+
+每个 ViewController 都加一行，pop/dismiss 后看控制台：
+
+```swift
+deinit {
+    print("\(Self.self) deinit")
+}
+// 如果 pop 后没看到这行 → 泄漏了
+```
+
+### Xcode Memory Graph Debugger
+
+在 App 运行中直接抓取内存快照，可视化查看引用链：
+
+1. 运行 App 到疑似泄漏的页面
+2. 点击 Xcode Debug 栏的 **⬡** 按钮，或 `Debug → Debug Memory Graph`
+3. 左侧面板显示所有存活对象，**紫色感叹号 = 泄漏**
+4. 点击对象查看完整引用链，直接看到循环引用的环
+
+::: tip 推荐场景
+不需要重新运行，随时截快照。适合开发过程中快速确认某个对象是否被释放。
+:::
+
+### Instruments - Leaks
+
+系统级的泄漏检测工具：
+
+1. `Product → Profile → Leaks` 模板
+2. 运行 App，操作疑似泄漏的页面
+3. Leaks 工具会标记检测到的泄漏对象
+4. 点击泄漏对象查看引用链和调用栈
+
+### Instruments - Allocations
+
+排查内存持续增长（不一定是泄漏，可能是缓存未清理）：
+
+1. `Product → Profile → Allocations` 模板
+2. 用 **Mark Generation**（Heapshot Analysis）功能
+3. 每次进入/退出页面前打一个 Mark
+4. 对比两次 Mark 之间新增但未释放的对象，找出堆积的类型
+
+### MLeaksFinder（第三方）
+
+腾讯开源的自动检测工具，开发阶段无感知运行：
+
+```ruby
+# Podfile（仅 Debug 引入）
+pod 'MLeaksFinder', :configurations => ['Debug']
+```
+
+原理：Hook `UIViewController` 的 pop/dismiss 方法，延迟 2 秒检查 VC 及其 View 树是否已释放，未释放则弹 Alert 警告。
+
+### 检测工具对比
+
+| 工具 | 侵入性 | 检测时机 | 适用场景 |
+|------|--------|---------|---------|
+| deinit 打印 | 需加代码 | 开发时 | 快速确认单个对象 |
+| Memory Graph | 无 | 调试时随时 | 可视化引用链，定位环 |
+| Instruments Leaks | 无 | Profile 模式 | 系统级泄漏检测 |
+| Instruments Allocations | 无 | Profile 模式 | 内存增长趋势分析 |
+| MLeaksFinder | Pod 集成 | 运行时自动 | 开发阶段自动发现 |
+
 ## 面试真题
 
 ### Q1: ARC 和 MRC 的区别？ARC 是运行时特性还是编译时特性？ ⭐
@@ -344,13 +529,47 @@ for (int i = 0; i < 100000; i++) {
 3. **解决方案**：delegate 用 `weak`、闭包用 `[weak self]` capture list、Timer 用 block API 或在 `deinit` 前 `invalidate`
 4. 加分：提到 `unowned` 的使用场景——当你确定引用的对象生命周期一定比自己长时可以用 `unowned`，比 `weak` 少了 Optional 解包的开销
 
+### Q6: 为什么 NSString 属性要用 copy 而不是 strong？ ⭐
+
+**答题思路**：
+
+1. 如果用 `strong`，外部传入一个 `NSMutableString`，内部属性和外部指向同一对象，外部修改会影响内部状态
+2. `copy` 在赋值时调用 `copy` 方法，生成不可变副本，切断与外部的联系
+3. 对于不可变对象（`NSString`），`copy` 实际是浅拷贝（返回自身），没有性能损失
+4. 对于可变对象（`NSMutableString`），`copy` 是深拷贝，生成新的不可变对象
+5. 加分：自定义对象支持 `copy` 需要实现 `NSCopying` 协议的 `copyWithZone:` 方法
+
+### Q7: atomic 和 nonatomic 的区别？atomic 能保证线程安全吗？ ⭐
+
+**答题思路**：
+
+1. `atomic`（默认）在 getter/setter 内部加自旋锁，保证读写操作的原子性
+2. `nonatomic` 不加锁，性能更好，iOS 开发中几乎都用 `nonatomic`
+3. **`atomic` 不等于线程安全**：它只保证 getter/setter 的原子性，不保证业务逻辑安全
+4. 例如 `self.array = @[]` 是安全的，但 `[self.array addObject:obj]` 不安全——getter 取出数组后，另一个线程可能同时修改
+5. 真正的线程安全需要用 `@synchronized`、`NSLock`、GCD 串行队列等
+
+### Q8: 对象的 dealloc 过程中做了什么？ ⭐⭐
+
+**答题思路**：
+
+1. 调用链：`dealloc` → `_objc_rootDealloc` → `object_dispose` → `objc_destructInstance` → `free`
+2. `objc_destructInstance` 依次处理：C++ 析构函数（`has_cxx_dtor`）→ 移除关联对象（`has_assoc`）→ `clearDeallocating`
+3. `clearDeallocating`：将所有 weak 指针置为 nil（`weakly_referenced`）→ 清理 Side Table 中的引用计数（`has_sidetable_rc`）
+4. 最后 `free()` 归还堆内存
+5. ARC 下 `dealloc` 不需要调用 `[super dealloc]`（编译器自动处理），只需要释放 ARC 管不到的资源（CF 对象、文件句柄等）
+
 ## 一张表回顾
 
 | 概念 | 核心要点 |
 |------|---------|
 | ARC | 编译器自动插入 `retain`/`release`，不是 GC |
 | 引用计数存储 | isa 的 `extra_rc`（19 位） → 溢出转 Side Table |
+| copy 语义 | `NSString` 用 `copy` 防止可变版本被外部修改；容器 copy 只是单层深拷贝 |
+| atomic vs nonatomic | `atomic` 只保证 getter/setter 原子性，不等于线程安全；iOS 几乎都用 `nonatomic` |
 | `weak` | Side Table 弱引用表，对象释放时遍历置 nil |
+| dealloc 调用链 | C++ 析构 → 移除关联对象 → weak 置 nil → 清理 Side Table → `free()` |
 | `autorelease` | `AutoreleasePoolPage` 双向链表，RunLoop 驱动释放 |
 | Tagged Pointer | 小对象直接编码在指针中，无需堆分配和引用计数 |
 | 循环引用 | delegate 用 `weak`、闭包用 `[weak self]`、Timer 用 block API |
+| 内存泄漏检测 | deinit 打印 → Memory Graph → Instruments Leaks → MLeaksFinder |
