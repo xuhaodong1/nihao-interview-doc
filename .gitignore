@@ -4,3 +4,4 @@ docs/.vitepress/cache/
 exports/
 .DS_Store
 .claude/
+examples/

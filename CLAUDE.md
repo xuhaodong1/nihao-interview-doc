@@ -90,6 +90,20 @@ docs/                          # VitePress 内容根目录
 
 推送到 `main` 分支后，GitHub Actions 自动构建并部署到 GitHub Pages（见 `.github/workflows/deploy.yml`）。
 
+## NotebookLM 导入链接生成
+
+线上地址为 `https://interview.nihao201.cn/`。当用户需要将某个模块的文章导入 NotebookLM 时，生成该模块下所有文章的线上链接（排除 `index.md`），格式为：
+
+```
+https://interview.nihao201.cn/<section>/<article>.html
+```
+
+例如 machine-learning 模块：
+```
+https://interview.nihao201.cn/machine-learning/basics.html
+https://interview.nihao201.cn/machine-learning/math.html
+```
+
 ## 注意事项
 
 - `config.mts` 是核心配置文件，修改时注意括号匹配和逗号

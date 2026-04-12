@@ -8,6 +8,10 @@ export default withMermaid(defineConfig({
   base: '/',
   ignoreDeadLinks: true,
 
+  markdown: {
+    math: true,
+  },
+
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
@@ -198,12 +202,16 @@ export default withMermaid(defineConfig({
             { text: '数学基础', link: '/machine-learning/math' },
             { text: '机器学习基础', link: '/machine-learning/basics' },
             { text: '监督学习', link: '/machine-learning/supervised' },
+            { text: '线性回归', link: '/machine-learning/linear-regression' },
+            { text: 'SVM 支持向量机', link: '/machine-learning/svm' },
             { text: '非监督学习', link: '/machine-learning/unsupervised' },
             { text: '集成学习', link: '/machine-learning/ensemble' },
             { text: '特征工程', link: '/machine-learning/feature-engineering' },
             { text: '模型评估与调优', link: '/machine-learning/evaluation' },
             { text: '概率图模型', link: '/machine-learning/probabilistic' },
             { text: '推荐系统', link: '/machine-learning/recommendation' },
+            { text: '实战：手写数字识别', link: '/machine-learning/mnist-practice' },
+            { text: '实战：加州房价预测', link: '/machine-learning/linear-regression-practice' },
           ],
         },
       ],
